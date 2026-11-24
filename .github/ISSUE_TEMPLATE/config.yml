@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions and help (Discord)
+    url: https://discord.com/invite/2BS7Z4FhJ
+    about: Ask questions and talk with the community and maintainers.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/Yukthi-Systems/Phoenix-MailStatus-Collector/security/advisories/new
+    about: Please report security issues privately, not as public issues.
+  - name: ✉️ Contact the maintainers
+    url: mailto:connect@yukthi.com
+    about: Email connect@yukthi.com for anything else.

@@ -1,0 +1,6 @@
+# /etc/postfix/header_checks
+# Log the reference header and the subject so mailstatus-collector can tie them
+# to the queue ID. WARN only writes a log line; the message is delivered unchanged.
+# Newer Postfix versions also accept INFO (check `man 5 header_checks`); the collector understands both.
+/^X-YSPL-ID:/    WARN
+/^Subject:/      WARN

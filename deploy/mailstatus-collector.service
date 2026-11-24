@@ -1,0 +1,64 @@
+[Unit]
+Description=Postfix delivery status collector (journal -> RabbitMQ)
+Documentation=https://github.com/Yukthi-Systems/Phoenix-MailStatus-Collector
+Documentation=file:///usr/local/share/doc/mailstatus-collector/README.md
+After=network-online.target postfix.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=mailstatus-collector
+Group=mailstatus-collector
+# Read access to the system journal.
+SupplementaryGroups=systemd-journal
+# Log file, rotated by the collector itself. Set here rather than in the env
+# file, so manual runs that source the env file (e.g. as root) don't write to it.
+# The env file can still override it (set it empty to log to the journal only).
+Environment=MAILSTATUS_LOG_FILE=/var/log/mailstatus-collector/collector.log
+# Journal position and in-flight mail. Set here for
+# the same reason: a manual run as root must not take over this file.
+Environment=MAILSTATUS_STATE_FILE=/var/lib/mailstatus-collector/state.json
+EnvironmentFile=/etc/mailstatus-collector/env
+# Creates /var/lib/mailstatus-collector owned by the service user.
+StateDirectory=mailstatus-collector
+StateDirectoryMode=0750
+# Creates /var/log/mailstatus-collector owned by the service user; writable
+# despite ProtectSystem=strict.
+LogsDirectory=mailstatus-collector
+LogsDirectoryMode=0750
+ExecStart=/usr/local/bin/mailstatus-collector
+# Exits non-zero if journalctl dies or the broker is unreachable at start;
+# systemd restarts it and it resumes from the last committed position.
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+
+# Resource limits: typical use is 10-20 MB RSS.
+MemoryMax=256M
+TasksMax=64
+
+# Hardening
+NoNewPrivileges=true
+CapabilityBoundingSet=
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

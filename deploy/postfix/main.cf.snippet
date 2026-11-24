@@ -1,0 +1,29 @@
+# --- Needed by mailstatus-collector ----------------------------------------
+# Add to / change in /etc/postfix/main.cf on every mail server.
+
+# Log the reference header and the subject (see header_checks).
+header_checks = regexp:/etc/postfix/header_checks
+# This defaults to $header_checks. Without this line, a mail attached to a mail
+# with no Subject of its own would report the attachment's subject.
+nested_header_checks =
+
+# Add a Message-ID when the app sends none (message_id is empty otherwise).
+always_add_missing_headers = yes
+
+# Queue IDs that are never reused, so log lines can't be attributed to an older message.
+enable_long_queue_ids = yes
+
+
+# --- Only when Postfix takes over delivery from another MTA ------------------
+# These change how mail is routed and retried. Do NOT apply them on a server
+# that already delivers through Postfix.
+
+# Deliver directly to recipient MX servers (no relay host in between).
+# relayhost =
+
+# Postfix owns the queue: give retries a realistic window. Adjust to your SLA.
+# maximal_queue_lifetime = 1d
+# bounce_queue_lifetime  = 1d
+# minimal_backoff_time   = 60s
+# maximal_backoff_time   = 900s
+# queue_run_delay        = 60s
